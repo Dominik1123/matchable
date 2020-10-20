@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "matchable"
 version = "0.1"
-description = "attribute-based object matching"
+description = "Attribute-based object matching"
 authors = ["Dominik1123"]
 license = "MIT"
 readme = "README.md"
