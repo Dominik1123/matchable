@@ -1,0 +1,12 @@
+[flake8]
+select = BLK,C,D,DAR,E,F,I,W
+ignore = BLK100,D100,D103,D104,D105,D107
+exclude =
+    src/matchable/__init__.py
+
+max-line-length = 120
+
+docstring-convention = google
+
+application-import-names = matchable
+import-order-style = google
