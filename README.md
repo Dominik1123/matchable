@@ -180,4 +180,4 @@ Then we can add the Rectangle patches as follows:
 
 This gives us the following plot:
 
-![Example plot](https://github.com/Dominik1123/matchable/blob/main/examples/visualize.svg)
+![Example plot](https://github.com/Dominik1123/matchable/blob/main/examples/visualize.png)
