@@ -132,7 +132,7 @@ sorted all the way to the left).
 
 The following diagram visualizes the class hierarchy as well as the order of precedence for the different matching flavors.
 
-![Diagram](https://github.com/Dominik1123/matchable/blob/main/misc/diagram.svg)
+![Diagram](https://raw.githubusercontent.com/Dominik1123/matchable/main/misc/diagram.svg)
 
 
 ## Example
@@ -185,4 +185,4 @@ Then we can add the Rectangle patches as follows:
 
 This gives us the following plot:
 
-![Example plot](https://github.com/Dominik1123/matchable/blob/main/examples/visualize.png)
+![Example plot](https://raw.githubusercontent.com/Dominik1123/matchable/main/examples/visualize.png)
