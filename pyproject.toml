@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "matchable"
-version = "0.1"
+version = "0.1.2"
 description = "Attribute-based object matching"
 authors = ["Dominik1123"]
 license = "MIT"
