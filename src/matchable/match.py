@@ -51,13 +51,13 @@ class Comparison(Condition):
         self.ref = ref
 
     def __lt__(self, other):
-        if isinstance(self, Comparison) and isinstance(other, Comparison):
+        if isinstance(other, Comparison):
             return False
         return NotImplemented
 
     def __eq__(self, other):
         attributes = operator.attrgetter('type', 'identifier', 'op', 'ref')
-        return type(self) == type(other) and attributes(self) == attributes(other)
+        return isinstance(other, Comparison) and attributes(self) == attributes(other)
 
     def __hash__(self):
         return hash((self.type, self.identifier, self.op))
@@ -95,12 +95,12 @@ class IsInstance(Condition):
     """Condition the type of objects."""
 
     def __lt__(self, other):
-        if type(self) == type(other):
+        if isinstance(other, IsInstance):
             return self.type in other.type.mro()
         return True
 
     def __eq__(self, other):
-        return type(self) == type(other) and self.type == other.type
+        return isinstance(other, IsInstance) and self.type == other.type
 
     def __hash__(self):
         return hash(self.type)
