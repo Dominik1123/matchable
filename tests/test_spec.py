@@ -3,7 +3,7 @@ import pytest
 from matchable.exceptions import NoMatchError
 from matchable.match import IsInstance
 from matchable.match import Match as match
-from matchable.spec import Options, Spec, LastSeenWins, Wrapper, WRAPPER_TYPES
+from matchable.spec import Options, Spec, CopyUpdate, LastSeenWins, Wrapper, WRAPPER_TYPES
 
 
 @pytest.fixture
@@ -144,6 +144,16 @@ def test_last_seen_always_wins():
     })
     assert spec.match({'x': 1}) == {'first'}
     assert spec.match({'x': 2}) == {'second'}
+
+
+def test_copy_update_or_not_implemented():
+    wrapper = CopyUpdate(dict(x=1))
+    assert wrapper.__or__(0) is NotImplemented
+
+
+def test_last_seen_wins_ror():
+    wrapper = LastSeenWins(0)
+    assert ('test' | wrapper) is wrapper
 
 
 def test_raises_if_no_options(spec):
