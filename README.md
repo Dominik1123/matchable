@@ -1,5 +1,5 @@
 [![Tests](https://github.com/Dominik1123/matchable/workflows/Tests/badge.svg)](https://github.com/Dominik1123/matchable/actions?workflow=Tests)
-[![Codecov](https://codecov.io/gh/Dominik1123/matchable/branch/master/graph/badge.svg)](https://codecov.io/gh/Dominik1123/matchable)
+[![Codecov](https://codecov.io/gh/Dominik1123/matchable/branch/main/graph/badge.svg)](https://codecov.io/gh/Dominik1123/matchable)
 [![PyPI](https://img.shields.io/pypi/v/matchable.svg)](https://pypi.org/project/matchable/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/matchable.svg?style=flat-square)](https://pypi.org/pypi/matchable/)
 
