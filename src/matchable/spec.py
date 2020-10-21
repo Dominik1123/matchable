@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Mapping, MutableMapping, Tuple, Type, TypeVa
 if sys.version_info >= (3, 8):
     from typing import Protocol
 else:
-    from typing_extensions import Protocol
+    from typing_extensions import Protocol  # pragma: no cover
 
 from .exceptions import NoMatchError
 from .match import Condition, IsInstance, Match, Pattern
