@@ -3,7 +3,7 @@ import pytest
 from matchable.exceptions import NoMatchError
 from matchable.match import IsInstance
 from matchable.match import Match as match
-from matchable.spec import Options, Spec, Wrapper, WRAPPER_TYPES
+from matchable.spec import Options, Spec, LastSeenWins, Wrapper, WRAPPER_TYPES
 
 
 @pytest.fixture
@@ -135,6 +135,15 @@ def test_last_seen_wins_on_impossible_update():
         int: 'not a mapping',
     })
     assert spec.match(0) == 'not a mapping'
+
+
+def test_last_seen_always_wins():
+    spec = Spec.from_patterns({
+        match(dict)['x'] > 0: {'first'},
+        match(dict)['x'] > 1: LastSeenWins({'second'}),
+    })
+    assert spec.match({'x': 1}) == {'first'}
+    assert spec.match({'x': 2}) == {'second'}
 
 
 def test_raises_if_no_options(spec):

@@ -50,6 +50,8 @@ class CopyUpdate(Wrapper):
         super().__init__(obj)
 
     def __or__(self, other):
+        if isinstance(other, LastSeenWins):
+            return other
         if isinstance(other, Wrapper):
             other = other.obj
         new = self.obj.copy()
