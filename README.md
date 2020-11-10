@@ -24,56 +24,70 @@ From [PyPI](https://pypi.org/project/matchable/):
 
 For example:
 
-    match(object).attr > 0
+```python
+match(object).attr > 0
+```
 
 This pattern matches any object which has an attribute `attr` that compares greater than `0`.
 
-    match(dict)['key'] == 0
+```python
+match(dict)['key'] == 0
+```
 
 This pattern matches all dicts (or subclasses thereof) with an item `'key'` which compares equal to `0`.
 
 Such patterns can be used to create a speficiation via the `Spec` class:
 
-    spec = Spec.from_patterns({
-        match(object).attr > 0: 'foo',
-        match(dict)['key'] == 0: 'bar',
-    })
+```python
+spec = Spec.from_patterns({
+    match(object).attr > 0: 'foo',
+    match(dict)['key'] == 0: 'bar',
+})
+```
 
 A spec can be used to match other objects against its patterns and to combine the corresponding values:
 
-    >>> spec.match({'key': 0})
-    'bar'
-    >>> class Test:
-    ...     attr = 1
-    ... 
-    >>> spec.match(Test())
-    'foo'
+```python
+>>> spec.match({'key': 0})
+'bar'
+>>> class Test:
+...     attr = 1
+... 
+>>> spec.match(Test())
+'foo'
+```
 
 If no condition matches the given object, an exception is raised:
 
-    >>> spec.match({'key': 5})
-    [...]
-    matchable.exceptions.NoMatchError: No matching conditions found for object {'key': 5}
+```python
+>>> spec.match({'key': 5})
+[...]
+matchable.exceptions.NoMatchError: No matching conditions found for object {'key': 5}
+```
 
 If multiple conditions match the given object, their corresponding values are combined (see the paragraph below
 for what "to combine" means in different contexts):
 
-    >>> class Test(dict):
-    ...     attr = 1
-    ... 
-    >>> spec.match(Test(key=0))
-    'bar'
+```python
+>>> class Test(dict):
+...     attr = 1
+... 
+>>> spec.match(Test(key=0))
+'bar'
+```
 
 Here, for strings, "to combine" means to simply select the last seen value
 (for customizing this behavior, see the next section).
 For dictionaries however the standard behavior is to update their content:
 
-    >>> spec = Spec.from_patterns({
-    ...     match(object).attr > 0: dict(x='foo'),
-    ...     match(dict)['key'] == 0: dict(y='bar'),
-    ... })
-    >>> spec.match(Test(key=0))
-    {'x': 'foo', 'y': 'bar'}
+```python
+>>> spec = Spec.from_patterns({
+...     match(object).attr > 0: dict(x='foo'),
+...     match(dict)['key'] == 0: dict(y='bar'),
+... })
+>>> spec.match(Test(key=0))
+{'x': 'foo', 'y': 'bar'}
+```
 
 This is useful for combining multiple partial configurations into one.
 
@@ -84,13 +98,15 @@ The example of the previous section showed that for strings the "last seen wins"
 is chosen for combining two values. Another possibility would be to concatenate values.
 We can implement this in the following way:
 
-    from matchable.spec import Wrapper, WRAPPER_TYPES
-    
-    class Concatenate(Wrapper):
-        def __or__(self, other):
-            return Concatenate(self.obj + other.obj)
-    
-    WRAPPER_TYPES[str] = Concatenate
+```python
+from matchable.spec import Wrapper, WRAPPER_TYPES
+
+class Concatenate(Wrapper):
+    def __or__(self, other):
+        return Concatenate(self.obj + other.obj)
+
+WRAPPER_TYPES[str] = Concatenate
+```
 
 Basically we need to supply a custom `Wrapper` class for the corresponding type in `WRAPPER_TYPES`.
 Since individual values are combined via `lhs | rhs` all this wrapper needs to do is implement the
@@ -100,15 +116,17 @@ the spec since once the spec is created it won't change the wrapper types of its
 
 So now we can create the spec and match some objects:
 
-    spec = Spec.from_patterns({
-        match(dict)['x'] > 0: 'foo',
-        match(dict)['x'] > 1: 'bar',
-    })
+```python
+spec = Spec.from_patterns({
+    match(dict)['x'] > 0: 'foo',
+    match(dict)['x'] > 1: 'bar',
+})
 
-    >>> spec.match({'x': 1})
-    'foo'
-    >>> spec.match({'x': 2})
-    'foobar'
+>>> spec.match({'x': 1})
+'foo'
+>>> spec.match({'x': 2})
+'foobar'
+```
 
 
 ## Patterns, Matching and the Class Hierarchy
@@ -139,49 +157,55 @@ The following diagram visualizes the class hierarchy as well as the order of pre
 
 Suppose a sequence of objects that should be visualized in some way. These are the objects:
 
-    from dataclasses import dataclass
+```python
+from dataclasses import dataclass
 
-    @dataclass
-    class Plant:
-        height: float
+@dataclass
+class Plant:
+    height: float
 
-    @dataclass
-    class Flower(Plant):
-        n_petals: int
+@dataclass
+class Flower(Plant):
+    n_petals: int
 
-    @dataclass
-    class Tree(Plant):
-        pass
+@dataclass
+class Tree(Plant):
+    pass
 
-    plants = [  # some random numbers
-        Flower(height=4.0, n_petals=5),
-        Flower(height=3.5, n_petals=7),
-        Flower(height=6.8, n_petals=4),
-        Tree(height=104.6),
-        Flower(height=1.8, n_petals=9),
-        Tree(height=187.2),
-        Tree(height=121.9),
-        Flower(height=2.2, n_petals=5),
-    ]
+plants = [  # some random numbers
+    Flower(height=4.0, n_petals=5),
+    Flower(height=3.5, n_petals=7),
+    Flower(height=6.8, n_petals=4),
+    Tree(height=104.6),
+    Flower(height=1.8, n_petals=9),
+    Tree(height=187.2),
+    Tree(height=121.9),
+    Flower(height=2.2, n_petals=5),
+]
+```
 
 Say we want to visualize these plant objects as rectangles with different styles that represent their attributes.
 We can do so by creating a spec that represents the various rectangles' configurations (note that if there are
 multiple matches in the spec, the dicts will be merged into one):
 
-    config = Spec.from_patterns({
-        match(Plant): dict(linestyle='-', linewidth=2, facecolor='none'),
-        match(Flower): dict(edgecolor='orange'),
-        match(Flower).height < 2.0: dict(hatch='/'),
-        match(Flower).n_petals >= 7: dict(facecolor='#ff7f0e33'),
-        match(Tree): dict(edgecolor='green'),
-        match(Tree).height > 160: dict(linestyle='--'),
-    })
+```python
+config = Spec.from_patterns({
+    match(Plant): dict(linestyle='-', linewidth=2, facecolor='none'),
+    match(Flower): dict(edgecolor='orange'),
+    match(Flower).height < 2.0: dict(hatch='/'),
+    match(Flower).n_petals >= 7: dict(facecolor='#ff7f0e33'),
+    match(Tree): dict(edgecolor='green'),
+    match(Tree).height > 160: dict(linestyle='--'),
+})
+```
 
 Then we can add the Rectangle patches as follows:
 
-    fig, ax = plt.subplots()
-    for i, plant in enumerate(plants):
-        ax.add_patch(Rectangle((i, 0), 0.5, 1, **config.match(plant)))
+```python
+fig, ax = plt.subplots()
+for i, plant in enumerate(plants):
+    ax.add_patch(Rectangle((i, 0), 0.5, 1, **config.match(plant)))
+```
 
 This gives us the following plot:
 
